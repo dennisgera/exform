@@ -9,8 +9,14 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserCreateInternal(UserBase):
+    hashed_password: str    
+
 class UserUpdate(UserBase):
     password: Optional[str] = None
+
+class UserUpdateInternal(UserBase):
+    hashed_password: Optional[str] = None
 
 class UserInDBBase(UserBase):
     id: int

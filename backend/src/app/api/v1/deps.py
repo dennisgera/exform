@@ -1,20 +1,26 @@
-from typing import AsyncGenerator, Optional
+from app.repositories.user import UserRepository
+from app.services.user_service import UserService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.config import settings
-from app.core.security import verify_password
 from app.db.session import get_db
-from app.models.user import User
-from app.services import user_service
+from app.controllers.user import UserController
 from app.schemas.token import TokenPayload
+from app.schemas.user import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
 
+def get_user_controller(db: AsyncSession = Depends(get_db)) -> UserController:
+    repository = UserRepository(db)
+    service = UserService(repository)
+    return UserController(service)
+
 async def get_current_user(
-    db: AsyncSession = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
+    token: str = Depends(oauth2_scheme),
+    user_controller: UserController = Depends(get_user_controller)
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -26,17 +32,20 @@ async def get_current_user(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
         token_data = TokenPayload(**payload)
+        if not token_data.sub:
+            raise credentials_exception
     except JWTError:
         raise credentials_exception
-    
-    user = await user_service.get_user_by_id(db, int(token_data.sub))
+
+    user = await user_controller.get_by_id(id=int(token_data.sub))
     if not user:
         raise credentials_exception
     return user
 
 async def get_current_active_user(
     current_user: User = Depends(get_current_user),
+    user_controller: UserController = Depends(get_user_controller)
 ) -> User:
-    if not await user_service.is_active(current_user):
+    if not await user_controller.service.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
