@@ -1,18 +1,16 @@
 from datetime import timedelta
 from typing import Any
 from app.controllers.user import UserController
-from fastapi import APIRouter, Depends, HTTPException, status
-from app.api.v1.deps import get_user_controller
+from fastapi import APIRouter, Depends, HTTPException
+from app.api.v1.deps import get_current_active_user, get_user_controller
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.v1 import deps
 from app.core import security
 from app.core.config import settings
-from app.services import user_service
 from app.schemas.token import Token
 from app.schemas.user import User, UserCreate
 
 router = APIRouter()
+
 
 @router.post("/login", response_model=Token)
 async def login(
@@ -23,10 +21,9 @@ async def login(
     OAuth2 compatible token login, get an access token for future requests
     """
     user = await user_controller.authenticate(
-        email=form_data.username,
-        password=form_data.password
+        email=form_data.username, password=form_data.password
     )
-    
+
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
         access_token=security.create_access_token(
@@ -34,6 +31,7 @@ async def login(
         ),
         token_type="bearer",
     )
+
 
 @router.post("/register", response_model=User)
 async def register(
@@ -53,9 +51,10 @@ async def register(
     user = await user_controller.create(user_in)
     return user
 
+
 @router.get("/me", response_model=User)
 async def read_users_me(
-    current_user: User = Depends(deps.get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
 ) -> Any:
     """
     Get current user.

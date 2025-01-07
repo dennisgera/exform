@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.endpoints import auth
+from app.api.v1.endpoints import auth, video
 from app.core.config import settings
 
 app = FastAPI(
@@ -23,6 +23,7 @@ async def health_check():
     return {"status": "healthy"}
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
+app.include_router(video.router, prefix=f"{settings.API_V1_STR}/videos", tags=["videos"])
 
 @app.get("/")
 async def root():

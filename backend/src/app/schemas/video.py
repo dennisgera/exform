@@ -8,7 +8,8 @@ class VideoBase(BaseModel):
     exercise_type: str
 
 class VideoCreate(VideoBase):
-    pass
+    user_id: int
+    file_path: str
 
 class VideoUpdate(VideoBase):
     pass

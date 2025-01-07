@@ -2,7 +2,7 @@ from app.controllers.base import BaseController
 from app.exceptions import RecordNotFoundHTTPException
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate, User as UserSchema
-from app.services.user_service import UserService
+from app.services.user import UserService
 from fastapi import HTTPException
 
 class UserController(BaseController[User, UserCreate, UserUpdate, UserSchema]):

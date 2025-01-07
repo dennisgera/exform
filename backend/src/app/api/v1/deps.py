@@ -1,5 +1,8 @@
+from app.controllers.video import VideoController
 from app.repositories.user import UserRepository
-from app.services.user_service import UserService
+from app.repositories.video import VideoRepository
+from app.services.user import UserService
+from app.services.video import VideoService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -17,6 +20,11 @@ def get_user_controller(db: AsyncSession = Depends(get_db)) -> UserController:
     repository = UserRepository(db)
     service = UserService(repository)
     return UserController(service)
+
+def get_video_controller(db: AsyncSession = Depends(get_db)) -> VideoController:
+    repository = VideoRepository(db)
+    service = VideoService(repository)
+    return VideoController(service)
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),

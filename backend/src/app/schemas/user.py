@@ -20,6 +20,7 @@ class UserUpdateInternal(UserBase):
 
 class UserInDBBase(UserBase):
     id: int
+    hashed_password: str
     model_config = ConfigDict(from_attributes=True)
 
 class User(UserInDBBase):
