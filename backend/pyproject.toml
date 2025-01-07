@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["Dennis Gera <geradennis@gmail.com>"]
+packages = [{include = "app", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.6"
+uvicorn = "^0.34.0"
+sqlalchemy = "^2.0.36"
+pydantic = "^2.10.4"
+alembic = "^1.14.0"
+pytest = "^8.3.4"
+httpx = "^0.28.1"
+anthropic = "^0.42.0"
+mediapipe = "^0.10.20"
+python-dotenv = "^1.0.1"
+pydantic-settings = "^2.7.1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+psycopg2-binary = "^2.9.10"
+asyncpg = "^0.30.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+isort = "^5.13.2"
+flake8 = "^7.1.1"
+pytest-cov = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
