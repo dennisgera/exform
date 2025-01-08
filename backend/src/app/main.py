@@ -28,10 +28,3 @@ app.include_router(video.router, prefix=f"{settings.API_V1_STR}/videos", tags=["
 @app.get("/")
 async def root():
     return {"message": "Welcome to Exercise Form Analysis API"}
-
-# Import and include routers
-# We'll add these as we build them
-# from app.api.endpoints import users, videos, auth
-# app.include_router(auth.router, prefix="/auth", tags=["auth"])
-# app.include_router(users.router, prefix="/users", tags=["users"])
-# app.include_router(videos.router, prefix="/videos", tags=["videos"])
